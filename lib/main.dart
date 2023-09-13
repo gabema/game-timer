@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'timer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,17 +56,28 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  final GameTimer _game = GameTimer([
+    PersonTimer(const Duration(minutes: 10).inSeconds),
+    PersonTimer(const Duration(minutes: 10).inSeconds),
+  ]);
 
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
+      // _game without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
+      _game.activePlayer().tick(1);
     });
+  }
+
+  void Function() _clickPlayer(int index) {
+    return () {
+      if (_game[index].isActive) {
+        _game.activateNextPlayer();
+      }
+    };
   }
 
   @override
@@ -105,12 +117,21 @@ class _MyHomePageState extends State<MyHomePage> {
           // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have clicked the button this many times:',
+            GestureDetector(
+              key: const Key("player1"),
+              onTap: _clickPlayer(0),
+              child: Text(
+                _game[0].displayTime(),
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            GestureDetector(
+              key: const Key("player2"),
+              onTap: _clickPlayer(1),
+              child: Text(
+                _game[1].displayTime(),
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
             ),
           ],
         ),
