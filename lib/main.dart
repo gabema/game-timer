@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'playerwidget.dart';
 import 'timer.dart';
 
 void main() {
@@ -12,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Game Timers',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -32,7 +34,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Game Timer'),
     );
   }
 }
@@ -55,29 +57,36 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+  late final Ticker _ticker;
   final GameTimer _game = GameTimer([
-    PersonTimer(const Duration(minutes: 10).inSeconds),
-    PersonTimer(const Duration(minutes: 10).inSeconds),
+    PersonTimer("player1", const Duration(minutes: 10)),
+    PersonTimer("player2", const Duration(minutes: 10)),
   ]);
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _game without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _game.activePlayer().tick(1);
+  @override
+  void initState() {
+    super.initState();
+    _ticker = createTicker((elapsed) {
+      setState(() {
+        // Elapsed time grows until it is reset.
+        _game.tick(elapsed);
+      });
     });
+    _game.activateNextPlayer();
+    _ticker.start();
   }
 
-  void Function() _clickPlayer(int index) {
-    return () {
-      if (_game[index].isActive) {
-        _game.activateNextPlayer();
-      }
-    };
+  @override
+  void dispose(){
+    _ticker.dispose();
+    super.dispose();
+  }
+
+  void _clickPlayer(PersonTimer personTimer) {
+    if(personTimer.isActive) {
+      _game.activateNextPlayer();
+    }
   }
 
   @override
@@ -115,32 +124,13 @@ class _MyHomePageState extends State<MyHomePage> {
           // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            GestureDetector(
-              key: const Key("player1"),
-              onTap: _clickPlayer(0),
-              child: Text(
-                _game[0].displayTime(),
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-            ),
-            GestureDetector(
-              key: const Key("player2"),
-              onTap: _clickPlayer(1),
-              child: Text(
-                _game[1].displayTime(),
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-            ),
+            Flexible(fit:FlexFit.tight, child: PlayerWidget(key: Key(_game[0].name), player: _game[0], onTap: _clickPlayer)),
+            Flexible(fit:FlexFit.tight, child: PlayerWidget(key: Key(_game[1].name), player: _game[1], onTap: _clickPlayer)),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

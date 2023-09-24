@@ -4,76 +4,69 @@ import 'package:test/test.dart';
 
 void main() {
   test('Counter value should be decremented when activated', () {
-    const startTime = 1000;
-    final counter = PersonTimer(startTime);
-    const offset = 100;
+    final counter = PersonTimer("test1", const Duration(minutes: 1, seconds: 1));
 
-    counter.secondsRemaining = startTime;
-    counter.isActive = true;
+    counter.start();
+    counter.tick(Duration.zero);
+    counter.tick(const Duration(seconds: 1));
 
-    counter.tick(offset);
-
-    expect(counter.secondsRemaining, startTime - offset);
+    expect(counter.displayTime(), '1:00');
   });
 
   test('Counter value should NOT be decremented when inactivate', () {
-    const startTime = 1000;
-    final counter = PersonTimer(startTime);
-    const offset = 100;
+    final counter = PersonTimer("test1", const Duration(minutes: 1, seconds: 1));
+    counter.tick(Duration.zero);
+    counter.tick(const Duration(seconds: 1));
 
-    counter.secondsRemaining = startTime;
-    counter.isActive = false;
-
-    counter.tick(offset);
-
-    expect(counter.secondsRemaining, startTime);
+    expect(counter.displayTime(), '1:01');
   });
 
   test('Player 1 reduced player 2 not reduced', () {
-    const startTime = 1000;
-    const offset = 100;
-    final player1 = PersonTimer(startTime);
-    final player2 = PersonTimer(startTime);
+    const startTime = Duration(minutes: 2, seconds: 2);
+    final player1 = PersonTimer("test1", startTime);
+    final player2 = PersonTimer("test2", startTime);
     final game = GameTimer([player1, player2]);
+    game.activateNextPlayer();
+    game.tick(Duration.zero);
+    game.tick(const Duration(minutes: 1, seconds: 3));
 
-    game.tick(offset);
-
-    expect(player1.secondsRemaining, startTime - offset);
-    expect(player2.secondsRemaining, startTime);
+    expect(player1.displayTime(), '0:59');
+    expect(player2.displayTime(), '2:02');
   });
 
   test('Player 2 activated player 1 not reduced after tick', () {
-    const startTime = 1000;
-    const offset = 100;
-    final player1 = PersonTimer(startTime);
-    final player2 = PersonTimer(startTime);
+    const startTime = Duration(minutes: 2, seconds: 2);
+    final player1 = PersonTimer("test1", startTime);
+    final player2 = PersonTimer("test2", startTime);
     final game = GameTimer([player1, player2]);
-
     game.activateNextPlayer();
-    game.tick(offset);
+    game.activateNextPlayer();
+    game.tick(Duration.zero);
+    game.tick(const Duration(minutes: 1, seconds: 3));
 
-    expect(player2.secondsRemaining, startTime - offset);
-    expect(player1.secondsRemaining, startTime);
+    expect(player1.displayTime(), '2:02');
+    expect(player2.displayTime(), '0:59');
   });
 
   test('Duration is formatted as expected', () {
-    final startTime = const Duration(minutes: 10).inSeconds;
-    final player1 = PersonTimer(startTime);
+    final player1 = PersonTimer("test1", const Duration(minutes: 10));
     var displayTime = player1.displayTime();
     expect(displayTime, '10:00');
-    player1.isActive = true;
-    player1.tick(1);
+    player1.start();
+    player1.tick(Duration.zero);
+    player1.tick(const Duration(seconds: 1));
     displayTime = player1.displayTime();
     expect(displayTime, '9:59');
   });
 
   test('Time should go negative after 0', () {
-    final player1 = PersonTimer(0);
+    final player1 = PersonTimer("test1", Duration.zero);
     expect(player1.displayTime(), '0:00');
-    player1.isActive = true;
-    player1.tick(1);
+    player1.start();
+    player1.tick(Duration.zero);
+    player1.tick(const Duration(seconds: 1));
     expect(player1.displayTime(), '-0:01');
-    player1.tick(const Duration(minutes: 10).inSeconds);
+    player1.tick(const Duration(minutes: 10, seconds: 1));
     expect(player1.displayTime(), '-10:01');
   });
 }

@@ -15,18 +15,19 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
+    var player1Key = const Key("player1");
+
     // Verify that our counter starts at 0.
     expect(find.text('10:00'), findsNWidgets(2));
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    // Tap player1 to active player and trigger a frame update.
+    await tester.tap(find.byKey(player1Key));
     await tester.pump();
 
     expect(find.text('10:00'), findsOneWidget);
     expect(find.text('9:59'), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('player1')));
-    await tester.tap(find.byIcon(Icons.add));
+    await tester.tap(find.byKey(player1Key));
     await tester.pump();
 
     // Verify that our counter starts at 0.
