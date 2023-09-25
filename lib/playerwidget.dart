@@ -15,14 +15,15 @@ class PlayerWidget extends StatelessWidget {
     return GestureDetector(
       key: key,
       onTap: () => onTap(player),
-      child: ColoredBox(
-        color: player.isActive ? Colors.green : Colors.grey,
-        child: Center(
-          child: Text(
-            player.displayTime(),
-            textAlign: TextAlign.center,
+      child: FittedBox(
+          fit: BoxFit.fill,
+          child: ColoredBox(
+            color: player.isActive ? Colors.green : Colors.grey,
+            child: Text(
+              player.displayTime(),
+              //textAlign: TextAlign.center,
+            )
           )
-        )
       )
     );
   }
