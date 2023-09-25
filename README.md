@@ -15,6 +15,12 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+## Deploy to github.io pages url
+
+Merge main into the gh-pages branch. Run the following build command and commit the output to the `docs/` folder.
+```
+flutter build web --output docs/ --base-href /game-timer/
+```
 
 ## Useful links
 
