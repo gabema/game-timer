@@ -1,6 +1,6 @@
-# flutter_application_1
+# game-timer
 
-A new Flutter project.
+A simple flutter based app that can measure a two person game time.
 
 ## Getting Started
 
@@ -15,6 +15,11 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+## Web Deployment
+
+The web version of the Timer app can be accessed [here](https://gabema.github.io/game-timer/).
+
+Deployments to this web app are made by merging main into the gh-pages branch and then checking in the build output of the following command: `flutter build web --output docs/ --base-href /game-timer/`.
 
 ## Useful links
 
