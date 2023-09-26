@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'playerwidget.dart';
 import 'timer.dart';
+import 'dart:math' as math;
 
 void main() {
   runApp(const MyApp());
@@ -57,7 +58,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   late final Ticker _ticker;
   final GameTimer _game = GameTimer([
     PersonTimer("player1", const Duration(minutes: 5)),
@@ -78,13 +80,13 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   }
 
   @override
-  void dispose(){
+  void dispose() {
     _ticker.dispose();
     super.dispose();
   }
 
   void _clickPlayer(PersonTimer personTimer) {
-    if(personTimer.isActive) {
+    if (personTimer.isActive) {
       _game.activateNextPlayer();
     }
   }
@@ -107,27 +109,37 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: 
-        Row(
-          children: [
-            Flexible(
-              fit: FlexFit.tight,
-              child: Column(
+      body: Row(
+        children: [
+          Flexible(
+            fit: FlexFit.tight,
+            child: Column(
               // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
               // action in the IDE, or press "p" in the console), to see the
               // wireframe for each widget.
               // mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Flexible(
-                    fit:   FlexFit.tight,
-                    child: PlayerWidget(key: Key(_game[0].name), player: _game[0], onTap: _clickPlayer),
+              children: <Widget>[
+                Flexible(
+                  fit: FlexFit.tight,
+                  child: Transform.rotate(
+                    angle: -math.pi,
+                    child: PlayerWidget(
+                        key: Key(_game[0].name),
+                        player: _game[0],
+                        onTap: _clickPlayer),
                   ),
-                  Flexible(fit:FlexFit.tight, child: PlayerWidget(key: Key(_game[1].name), player: _game[1], onTap: _clickPlayer)),
-                ],
-              ),
+                ),
+                Flexible(
+                    fit: FlexFit.tight,
+                    child: PlayerWidget(
+                        key: Key(_game[1].name),
+                        player: _game[1],
+                        onTap: _clickPlayer)),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 }
