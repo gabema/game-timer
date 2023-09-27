@@ -5,6 +5,7 @@ class PersonTimer {
   Duration? _start;
   Duration _active = Duration.zero;
   bool _isActive = false;
+  bool _isPaused = false;
 
   PersonTimer(this.name, this._remaining) {
     _start = null;
@@ -14,6 +15,17 @@ class PersonTimer {
     if (!isActive){
       _active = Duration.zero;
       _isActive = true;
+    }
+  }
+
+  void pause() {
+    if (_isActive) {
+      _isPaused = !_isPaused;
+      if(_isPaused) {
+        _remaining -= _active;
+        _start = null;
+        _active = Duration.zero;
+      }
     }
   }
 
@@ -29,10 +41,14 @@ class PersonTimer {
   bool get isActive => _isActive;
 
   void tick(Duration reduced) {
-    if (isActive) {
+    if (isActive && !_isPaused) {
       _start ??= reduced;
       _active = reduced - _start!;
     }
+  }
+
+  void addDuration(Duration time) {
+    _remaining += time;
   }
 
   String displayTime() {
@@ -49,6 +65,18 @@ class GameTimer {
   void tick(Duration reduced) {
     for (var player in _players) {
       player.tick(reduced);
+    }
+  }
+
+  void addDuration(Duration duration) {
+    for (var player in _players) {
+      player.addDuration(duration);
+    }
+  }
+
+  void pause() {
+    for (var player in _players) {
+      player.pause();
     }
   }
 

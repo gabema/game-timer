@@ -91,6 +91,23 @@ class _MyHomePageState extends State<MyHomePage>
     }
   }
 
+  void _subTime() {
+    _game.addDuration(const Duration(minutes: -1));
+  }
+
+  void _addTime() {
+    _game.addDuration(const Duration(minutes: 1));
+  }
+
+  void _pauseResumeTime() {
+    if (_ticker.isActive) {
+      _ticker.stop();
+    } else {
+      _ticker.start();
+    }
+    _game.pause();
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -121,6 +138,7 @@ class _MyHomePageState extends State<MyHomePage>
               children: <Widget>[
                 Flexible(
                   fit: FlexFit.tight,
+                  flex: 5,
                   child: Transform.rotate(
                     angle: -math.pi,
                     child: PlayerWidget(
@@ -130,6 +148,25 @@ class _MyHomePageState extends State<MyHomePage>
                   ),
                 ),
                 Flexible(
+                  child: Row(
+                    children: [
+                      Flexible(
+                        fit: FlexFit.tight,
+                        child: SimpleButton(key: const Key('subTime'), onTap: _subTime, text: "-")
+                      ),
+                      Flexible(
+                        fit: FlexFit.tight,
+                        child: SimpleButton(key: const Key('pauseResumeTime'), onTap: _pauseResumeTime, text: "<>"),
+                      ),
+                      Flexible(
+                        fit: FlexFit.tight,
+                        child: SimpleButton(key: const Key('addTime'), onTap: _addTime, text: "+"),
+                      ),
+                    ],
+                  ),
+                ),
+                Flexible(
+                    flex: 5,
                     fit: FlexFit.tight,
                     child: PlayerWidget(
                         key: Key(_game[1].name),
