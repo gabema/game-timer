@@ -1,5 +1,5 @@
 // Import the test package and Counter class
-import 'package:flutter_application_1/timer.dart';
+import 'package:gametimer/timer.dart';
 import 'package:test/test.dart';
 
 void main() {

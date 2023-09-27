@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_application_1/main.dart';
+import 'package:gametimer/main.dart';
 
 void main() {
   testWidgets('Timer start and decrement smoke test', (WidgetTester tester) async {
